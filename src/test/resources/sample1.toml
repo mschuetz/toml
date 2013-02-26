@@ -1,0 +1,10 @@
+[fruit] # comment
+nested = [[1,2],[3,4], []]
+type = "apple" # comment
+dob = 1979-05-27T07:32:00Z # First class dates? Why not?
+# comment
+
+[legume]
+type = "lentil"
+variants = ["red", "yellow", "beluga"] # comment
+nested = [[1,2],[3,4], []]
