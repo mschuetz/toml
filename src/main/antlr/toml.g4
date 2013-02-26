@@ -2,7 +2,7 @@ grammar toml;
 
 toml : object+ ;
 
-object : header NL pair* NL;
+object : header NL+ pair* NL+;
 
 value
     : string
@@ -27,7 +27,7 @@ fragment SECOND : DIGIT2 ;
 fragment DIGIT4 : DIGIT DIGIT DIGIT DIGIT ;
 fragment DIGIT2 : DIGIT DIGIT ;
 
-pair : name ASSIGN value NL;
+pair : name ASSIGN value NL+;
 
 name : ID ;
 
@@ -76,7 +76,7 @@ NUMBER
 fragment INT :   '0' | [1-9] [0-9]* ; // no leading zeros
 fragment EXP :   [Ee] [+\-]? INT ; // \- since - means "range" inside [...]
 
-WS  :   [ \t\n\r]+ -> skip ;
+WS  :   [ \t]+ -> skip ;
 
 COMMENT : '#' ~[\r\n]* -> skip; // skip comments
 

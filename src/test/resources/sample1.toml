@@ -1,7 +1,9 @@
+# comment
 [fruit] # comment
 nested = [[1,2],[3,4], []]
-empty1 = []
-empty2 = [[]]
+#comment
+stringarray = ["abc", "def"]
+dtarray = [1979-05-27T07:32:00Z, 1970-01-01T00:00:00Z]
 type = "apple" # comment
 dob = 1979-05-27T07:32:00Z # First class dates? Why not?
 # comment
