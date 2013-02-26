@@ -1,6 +1,6 @@
 grammar toml;
 
-toml : object+ ;
+toml : NL* pair* object+ ;
 
 object : header NL+ pair* NL+;
 
