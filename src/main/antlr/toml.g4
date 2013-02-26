@@ -5,11 +5,11 @@ toml : object+ ;
 object : header NL pair* NL;
 
 value
-    :   string
-    |   number
-    |   datetime
-    |   array
-    |   bool
+    : string
+    | number
+    | datetime
+    | array
+    | bool
     ;
 
 datetime : ISO8601 ;
@@ -32,8 +32,8 @@ pair : name ASSIGN value NL;
 name : ID ;
 
 array
-    :   OBRACKET value (COMMA value)* CBRACKET
-    |   CBRACKET OBRACKET
+    : OBRACKET value (COMMA value)* CBRACKET
+    | OBRACKET CBRACKET
     ;
 
 string : STRING ;

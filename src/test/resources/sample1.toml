@@ -1,5 +1,7 @@
 [fruit] # comment
 nested = [[1,2],[3,4], []]
+empty1 = []
+empty2 = [[]]
 type = "apple" # comment
 dob = 1979-05-27T07:32:00Z # First class dates? Why not?
 # comment
