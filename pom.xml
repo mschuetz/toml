@@ -5,6 +5,17 @@
 	<artifactId>toml</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<developers>
+		<developer>
+			<name>Matthias Schütz</name>
+			<email>mschuetz@gmail.com</email>
+			<timezone>1</timezone>
+			<url>http://www.matthias-schuetz.eu</url>
+		</developer>
+	</developers>
+	
+	<inceptionYear>2013</inceptionYear>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.antlr</groupId>
@@ -50,5 +61,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
