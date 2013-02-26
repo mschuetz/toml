@@ -32,8 +32,8 @@ pair : name ASSIGN value NL+;
 name : ID ;
 
 array
-    : OBRACKET value (COMMA value)* CBRACKET
-    | OBRACKET CBRACKET
+    : OBRACKET NL* value ( NL* COMMA NL* value)*  NL* CBRACKET
+    | OBRACKET NL* CBRACKET
     ;
 
 string : STRING ;
