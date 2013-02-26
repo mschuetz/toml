@@ -32,8 +32,8 @@ pair : name ASSIGN value NL+;
 name : ID ;
 
 array
-    : OBRACKET NL* value ( NL* COMMA NL* value)*  NL* CBRACKET
-    | OBRACKET NL* CBRACKET
+    : '[' NL* value ( NL* COMMA NL* value)*  NL* ']'
+    | '[' NL* ']'
     ;
 
 string : STRING ;
@@ -51,12 +51,9 @@ BOOLEAN
     | 'false'
     ;
 
-header : OBRACKET objectname CBRACKET;
+header : '[' objectname ']';
 
-objectname : ID ;
-
-OBRACKET : '[' ;
-CBRACKET : ']' ;
+objectname : ID ('.' ID)* ;
 
 ASSIGN : '=' ;
 
