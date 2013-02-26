@@ -12,8 +12,6 @@ value
     | bool
     ;
 
-datetime : ISO8601 ;
-
 ISO8601 : YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' SECOND ZULU;
 
 fragment ZULU : [zZ] ;
@@ -27,24 +25,22 @@ fragment SECOND : DIGIT2 ;
 fragment DIGIT4 : DIGIT DIGIT DIGIT DIGIT ;
 fragment DIGIT2 : DIGIT DIGIT ;
 
-pair : name ASSIGN value NL+;
+pair : name '=' value NL+;
 
 name : ID ;
 
 array
-    : '[' NL* value ( NL* COMMA NL* value)*  NL* ']'
+    : '[' NL* value ( NL* ',' NL* value)*  NL* ']'
     | '[' NL* ']'
     ;
 
+// increase expressiveness of parse tree
 string : STRING ;
 number : NUMBER ;
 bool : BOOLEAN ;
-
-fragment COLON : ':' ;
+datetime : ISO8601 ;
 
 NL : [\r\n] ;
-
-COMMA : ',' ;
 
 BOOLEAN
     : 'true'
@@ -55,10 +51,9 @@ header : '[' objectname ']';
 
 objectname : ID ('.' ID)* ;
 
-ASSIGN : '=' ;
-
 fragment DIGIT : [0-9] ;
 
+// from antlr examples (json grammar)
 STRING :  '"' (ESC | ~["\\])* '"' ;
 
 fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
@@ -77,6 +72,7 @@ WS  :   [ \t]+ -> skip ;
 
 COMMENT : '#' ~[\r\n]* -> skip; // skip comments
 
+// from antlr examples (java grammar)
 ID : NameStartChar NameChar* ;
 
 fragment
