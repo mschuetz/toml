@@ -13,7 +13,7 @@
 			<url>http://www.matthias-schuetz.eu</url>
 		</developer>
 	</developers>
-	
+
 	<inceptionYear>2013</inceptionYear>
 
 	<dependencies>
@@ -58,6 +58,19 @@
 					<target>1.6</target>
 				</configuration>
 				<version>2.3.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.0</version>
+				<executions>
+					<execution>
+						<id>antlr</id>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
