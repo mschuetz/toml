@@ -25,7 +25,10 @@ public class KeyGroup {
 		return name;
 	}
 
-	public Object getMember(String path) {
+	/**
+	 * recursively looks up a child element of this key group
+	 */
+	public Object get(String path) {
 		KeyGroup cur = this;
 		int i = 0;
 		final String[] parts = path.split("\\.");
@@ -43,7 +46,7 @@ public class KeyGroup {
 		throw new IllegalStateException("unreachable");
 	}
 
-	public void addMember(String key, Object value) {
+	public void add(String key, Object value) {
 		members.put(key, value);
 	}
 
