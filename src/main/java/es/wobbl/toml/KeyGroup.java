@@ -3,11 +3,12 @@ package es.wobbl.toml;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 public class KeyGroup {
 
 	private final String name;
-	private final Map<String, Object> members = Util.newMap();
+	private final Map<String, Object> members = Maps.newLinkedHashMap();
 
 	private final boolean root;
 
