@@ -29,12 +29,12 @@ public class KeyGroup {
 		int i = 0;
 		final String[] parts = path.split("\\.");
 		for (final String key : parts) {
+			final Object obj = cur.members.get(key);
+			Preconditions.checkArgument(obj != null, "child node doesn't exist: %s", path);
 			if (i < parts.length - 1) {
-				cur = (KeyGroup) cur.members.get(key);
-				Preconditions.checkArgument(cur != null, "child node doesn't exist: %s", path);
+				Preconditions.checkArgument(obj instanceof KeyGroup, "not at end of path but got non-keygroup child");
+				cur = (KeyGroup) obj;
 			} else {
-				Object obj = cur.members.get(key);
-				Preconditions.checkArgument(obj != null, "child node doesn't exist: %s", path);
 				return obj;
 			}
 			i++;
