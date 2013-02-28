@@ -11,9 +11,9 @@ public class KeyGroupTest {
 		final KeyGroup root = new KeyGroup("root", true);
 		final KeyGroup c1 = new KeyGroup("node1");
 		final KeyGroup c2 = new KeyGroup("node2");
-		root.add("c1", c1);
-		c1.add("c2", c2);
-		c2.add("value", "hello");
+		root.put("c1", c1);
+		c1.put("c2", c2);
+		c2.put("value", "hello");
 		assertEquals("hello", root.get("c1.c2.value"));
 	}
 
@@ -21,7 +21,14 @@ public class KeyGroupTest {
 	public void testRecursiveKeyLookupFailure() {
 		final KeyGroup root = new KeyGroup("root", true);
 		final KeyGroup c1 = new KeyGroup("node1");
-		root.add("c1", c1);
+		root.put("c1", c1);
 		assertEquals("hello", root.get("c1.c2.value"));
+	}
+
+	@Test
+	public void testPutRecursive() {
+		final KeyGroup root = new KeyGroup("__root__", true);
+		root.putRecursive("foo.bar.baz", "hello");
+		assertEquals("hello", root.get("foo.bar.baz"));
 	}
 }

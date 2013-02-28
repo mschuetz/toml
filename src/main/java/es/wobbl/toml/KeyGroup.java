@@ -46,8 +46,41 @@ public class KeyGroup {
 		throw new IllegalStateException("unreachable");
 	}
 
-	public void add(String key, Object value) {
+	public void put(String key, Object value) {
 		members.put(key, value);
+	}
+
+	/**
+	 * creates keygroups recursively up to the second last path segment and puts
+	 * the given object into the last keygroup under the last path segment as
+	 * name.
+	 * 
+	 * new keygroups along the path will be created if they don't exist yet. an
+	 * {@link IllegalArgumentException} is raised.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if it finds a non-keygroup object along the path
+	 */
+	public void putRecursive(String path, Object obj) {
+		KeyGroup cur = this;
+		int i = 0;
+		final String[] parts = path.split("\\.");
+		for (final String key : parts) {
+			if (i < parts.length - 1) {
+				final Object next = cur.members.get(key);
+				if (next == null) {
+					final KeyGroup nextKeyGroup = new KeyGroup(key);
+					cur.members.put(key, nextKeyGroup);
+					cur = nextKeyGroup;
+				} else {
+					Preconditions.checkArgument(next instanceof KeyGroup, "not at end of path but got non-keygroup child");
+					cur = (KeyGroup) next;
+				}
+			} else {
+				cur.members.put(key, obj);
+			}
+			i++;
+		}
 	}
 
 	public boolean isRoot() {
