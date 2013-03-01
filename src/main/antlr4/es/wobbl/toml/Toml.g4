@@ -56,7 +56,7 @@ fragment DIGIT : [0-9] ;
 // from antlr examples (json grammar)
 STRING :  '"' (ESC | ~["\\])* '"' ;
 
-fragment ESC :   '\\' (["\\/bfnrt] | UNICODE) ;
+fragment ESC :   '\\' (["\\/0bfnrt] | UNICODE) ;
 fragment UNICODE : 'u' HEX HEX HEX HEX ;
 fragment HEX : [0-9a-fA-F] ;
 

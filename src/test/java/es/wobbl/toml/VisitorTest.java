@@ -11,6 +11,7 @@ public class VisitorTest {
 	 */
 	public static void main(String[] args) throws IOException {
 		final InputStream in = VisitorTest.class.getResourceAsStream("/sample1.toml");
-		System.out.println(Toml.parse(in));
+		final KeyGroup kg = Toml.parse(in);
+		System.out.println(kg);
 	}
 }

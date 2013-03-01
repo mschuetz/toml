@@ -68,10 +68,16 @@ public class Toml extends TomlBaseVisitor<Object> {
 		return new Pair<String, Object>(name, value);
 	}
 
+	/*
+	 * \0 - null character (0x00) \t - tab (0x09) \n - newline (0x0a) \r -
+	 * carriage return (0x0d) \" - quote (0x22) \\ - backslash (0x5c)
+	 */
 	@Override
 	public Object visitString(StringContext ctx) {
 		// extract between quotes and unescape
-		return ctx.getText();
+		final String s = ctx.getText();
+		return s.substring(1, s.length() - 1).replace("\\0", "\0").replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+				.replace("\\\"", "\"").replace("\\\\", "\\");
 	}
 
 	@Override
