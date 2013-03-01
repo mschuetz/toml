@@ -1,4 +1,5 @@
 # comment
+[empty.keygroup]
 [fruit] # comment
 nested = [[1,2],[3,4], []]
 #comment

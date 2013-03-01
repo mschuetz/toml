@@ -2,6 +2,9 @@ package es.wobbl.toml;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -10,15 +13,19 @@ public class KeyGroup {
 	private final String name;
 	private final Map<String, Object> members = Maps.newLinkedHashMap();
 
-	private final boolean root;
+	private final String path;
+	private final KeyGroup parent;
 
-	public KeyGroup(String name, boolean root) {
-		this.name = Preconditions.checkNotNull(name);
-		this.root = root;
+	public KeyGroup(String name, KeyGroup parent) {
+		this.path = this.name = Preconditions.checkNotNull(name);
+		this.parent = Preconditions.checkNotNull(parent);
+
 	}
 
 	public KeyGroup(String name) {
-		this(name, false);
+		this.name = Preconditions.checkNotNull(name);
+		this.path = "";
+		this.parent = null;
 	}
 
 	public String getName() {
@@ -64,6 +71,7 @@ public class KeyGroup {
 	public void putRecursive(String path, Object obj) {
 		KeyGroup cur = this;
 		int i = 0;
+		final String curPath = this.path;
 		final String[] parts = path.split("\\.");
 		for (final String key : parts) {
 			if (i < parts.length - 1) {
@@ -84,6 +92,15 @@ public class KeyGroup {
 	}
 
 	public boolean isRoot() {
-		return root;
+		return getParent() == null;
+	}
+
+	public KeyGroup getParent() {
+		return parent;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

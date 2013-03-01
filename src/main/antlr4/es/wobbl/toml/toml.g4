@@ -1,4 +1,4 @@
-grammar toml;
+grammar Toml;
 
 toml : NL* pair* object+ ;
 
