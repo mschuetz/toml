@@ -1,5 +1,6 @@
 package es.wobbl.toml;
 
+import java.util.Calendar;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -12,20 +13,15 @@ public class KeyGroup {
 
 	private final String name;
 	private final Map<String, Object> members = Maps.newLinkedHashMap();
+	private final boolean root;
 
-	private final String path;
-	private final KeyGroup parent;
-
-	public KeyGroup(String name, KeyGroup parent) {
-		this.path = this.name = Preconditions.checkNotNull(name);
-		this.parent = Preconditions.checkNotNull(parent);
-
+	public KeyGroup(String name, boolean root) {
+		this.name = Preconditions.checkNotNull(name);
+		this.root = root;
 	}
 
 	public KeyGroup(String name) {
-		this.name = Preconditions.checkNotNull(name);
-		this.path = "";
-		this.parent = null;
+		this(name, false);
 	}
 
 	public String getName() {
@@ -53,6 +49,26 @@ public class KeyGroup {
 		throw new IllegalStateException("unreachable");
 	}
 
+	public String getString(String path) {
+		return (String) get(path);
+	}
+
+	public long getLong(String path) {
+		return (Long) get(path);
+	}
+
+	public boolean getBool(String path) {
+		return (Boolean) get(path);
+	}
+
+	public Calendar getCalendar(String path) {
+		return (Calendar) get(path);
+	}
+
+	public KeyGroup getKeyGroup(String path) {
+		return (KeyGroup) get(path);
+	}
+
 	public void put(String key, Object value) {
 		members.put(key, value);
 	}
@@ -71,7 +87,6 @@ public class KeyGroup {
 	public void putRecursive(String path, Object obj) {
 		KeyGroup cur = this;
 		int i = 0;
-		final String curPath = this.path;
 		final String[] parts = path.split("\\.");
 		for (final String key : parts) {
 			if (i < parts.length - 1) {
@@ -92,11 +107,7 @@ public class KeyGroup {
 	}
 
 	public boolean isRoot() {
-		return getParent() == null;
-	}
-
-	public KeyGroup getParent() {
-		return parent;
+		return root;
 	}
 
 	@Override

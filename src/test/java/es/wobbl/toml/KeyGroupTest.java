@@ -20,7 +20,7 @@ public class KeyGroupTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testRecursiveKeyLookupFailure() {
 		final KeyGroup root = new KeyGroup("root");
-		final KeyGroup c1 = new KeyGroup("c1", root);
+		final KeyGroup c1 = new KeyGroup("c1", true);
 		root.put("c1", c1);
 		assertEquals("hello", root.get("c1.c2.value"));
 	}
