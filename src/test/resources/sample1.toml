@@ -1,4 +1,5 @@
 # comment
+[empty.keygroup]
 [fruit] # comment
 nested = [[1,2],[3,4], []]
 #comment
@@ -10,5 +11,5 @@ dob = 1979-05-27T07:32:00Z # First class dates? Why not?
 
 [legume]
 type = "lentil"
-variants = ["red", "yellow", "beluga"] # comment
+variants = ["red", "yellow", "bel\nuga"] # comment
 nested = [[1,2],[3,4], []]
