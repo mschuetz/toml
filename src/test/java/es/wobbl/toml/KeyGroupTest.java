@@ -54,4 +54,13 @@ public class KeyGroupTest {
 		assertEquals("foo\nbar\tbaz", root.getList("types_in_arrays.string", String.class).get(0));
 		assertEquals(1000000000L, root.getList("types_in_arrays.iso8601", Calendar.class).get(0).getTimeInMillis() / 1000L);
 	}
+
+	@Test
+	public void testSerialization() throws IOException {
+		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/full.toml"));
+		final StringBuilder out = new StringBuilder();
+		root.toToml(out);
+		final KeyGroup root2 = Toml.parse(out.toString());
+		assertEquals(root, root2);
+	}
 }

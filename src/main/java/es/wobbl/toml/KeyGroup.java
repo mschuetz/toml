@@ -1,9 +1,13 @@
 package es.wobbl.toml;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -125,6 +129,53 @@ public class KeyGroup {
 
 	public boolean isRoot() {
 		return root;
+	}
+
+	public void toToml(Appendable out) throws IOException {
+		if (!root)
+			out.append('[').append(name).append("]\n");
+
+		for (final Map.Entry<String, Object> entry : members.entrySet()) {
+			final Object obj = entry.getValue();
+			if (obj instanceof KeyGroup)
+				continue;
+			out.append(entry.getKey()).append(" = ");
+			serializeValue(out, obj);
+			out.append('\n');
+		}
+
+		for (final Object obj : members.values()) {
+			if (obj instanceof KeyGroup) {
+				((KeyGroup) obj).toToml(out);
+				out.append('\n');
+			}
+		}
+	}
+
+	private void serializeValue(Appendable out, final Object obj) throws IOException {
+		if (obj instanceof Calendar) {
+			out.append(DatatypeConverter.printDateTime((Calendar) obj));
+		} else if (obj instanceof List<?>) {
+			out.append('[');
+			final List<?> list = (List<?>) obj;
+			for (final Iterator<?> it = list.iterator(); it.hasNext();) {
+				serializeValue(out, it.next());
+				if (it.hasNext())
+					out.append(", ");
+			}
+			out.append(']');
+		} else if (obj instanceof String) {
+			out.append('"');
+			out.append(escape((String) obj));
+			out.append('"');
+		} else {
+			out.append(obj.toString());
+		}
+	}
+
+	private String escape(String s) {
+		return s.replace("\\", "\\\\").replace("\0", "\\0").replace("\t", "\\t").replace("\n", "\\n").replace("\r", "\\r")
+				.replace("\"", "\\\"");
 	}
 
 	@Override
