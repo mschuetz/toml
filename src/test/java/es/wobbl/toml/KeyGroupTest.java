@@ -7,6 +7,8 @@ import java.util.Calendar;
 
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
+
 public class KeyGroupTest {
 
 	@Test
@@ -69,5 +71,22 @@ public class KeyGroupTest {
 		// root.toToml(System.out);
 		final KeyGroup root2 = Toml.parse(out.toString());
 		assertEquals(root, root2);
+	}
+
+	@Test
+	public void testHardExample() throws IOException {
+		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/hard_example.toml"));
+		final StringBuilder out = new StringBuilder();
+		root.toToml(out);
+		final KeyGroup root2 = Toml.parse(out.toString());
+		// assertEquals(root, root2);
+		assertEquals(ImmutableList.of("] ", " # "), root.getList("the.hard.test_array", String.class));
+		assertEquals(ImmutableList.of("Test #11 ]proved that", "Experiment #9 was a success"),
+				root.getList("the.hard.test_array2", String.class));
+		assertEquals(" And when \"'s are in the string, along with # \"", root.getString("the.hard.harder_test_string"));
+
+		assertEquals("You don't think some user won't do that?", root.getString("the.hard.bit#.what?"));
+
+		assertEquals(ImmutableList.of("]"), root.getList("the.hard.bit#.multi_line_array", String.class));
 	}
 }

@@ -39,8 +39,10 @@ ASSIGN : '=' { in_value = true; };
 
 name : ID ;
 
+ID :  { !in_value }? NameChar ~[ \t=]+;
+
 array
-    : '[' NL* value ( NL* ',' NL* value)*  NL* ']'
+    : '[' NL* value ( NL* ',' NL* value)* NL* ','?  NL* ']'
     | '[' NL* ']'
     ;
 
@@ -79,7 +81,7 @@ WS  :   [ \t]+ -> skip ;
 COMMENT : '#' ~[\r\n]* -> skip; // skip comments
 
 // from antlr examples (java grammar)
-ID : NameStartChar NameChar* ;
+//ID : NameStartChar NameChar* ;
 
 fragment
 NameChar
