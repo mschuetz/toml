@@ -2,13 +2,17 @@
 A [TOML](https://github.com/mojombo/toml) parser for Java powered by [ANTLR 4](http://antlr.org).
 [![Build Status](https://secure.travis-ci.org/mschuetz/toml.png)](http://travis-ci.org/mschuetz/toml)
 
-## Example Usage:
+## Usage Example:
 
-	import es.wobbl.toml.Toml
+	import es.wobbl.toml.Toml;
 	
-	KeyGroup root = Toml.parse(new FileInputStream("example.toml"))
-	String ip = root.getString("servers.alpha.ip")
-	List<Long> ports = root.getList("database.ports", Long.class)
+	// Parsing
+	KeyGroup root = Toml.parse(new FileInputStream("example.toml"));
+	String ip = root.getString("servers.alpha.ip");
+	List<Long> ports = root.getList("database.ports", Long.class);
+	
+	// Serialization
+	root.toToml(new FileWriter("/tmp/foo.toml"));
 	
 ## MIT License
 
