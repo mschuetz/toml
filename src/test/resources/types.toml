@@ -1,0 +1,15 @@
+# a toml document containing all supported datatypes
+
+[types]
+long = 1234567890
+double1 = 3.14159
+double2 = 1E6
+string = "foo\nbar\tbaz"
+iso8601 = 2001-09-09T01:46:40Z # 1000000000
+
+[types_in_arrays]
+long = [1234567890]
+double1 = [3.14159]
+double2 =[ 1E6]
+string = ["foo\nbar\tbaz"]
+iso8601 = [2001-09-09T01:46:40Z] # 1000000000

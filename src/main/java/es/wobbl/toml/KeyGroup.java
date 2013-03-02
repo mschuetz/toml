@@ -1,5 +1,6 @@
 package es.wobbl.toml;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,14 @@ public class KeyGroup {
 
 	public long getLong(String path) {
 		return (Long) get(path);
+	}
+
+	public BigInteger getBigInteger(String path) {
+		return (BigInteger) get(path);
+	}
+
+	public double getDouble(String path) {
+		return (Double) get(path);
 	}
 
 	public boolean getBool(String path) {
