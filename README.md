@@ -2,6 +2,8 @@
 A [TOML](https://github.com/mojombo/toml) parser for Java powered by [ANTLR 4](http://antlr.org).
 [![Build Status](https://secure.travis-ci.org/mschuetz/toml.png)](http://travis-ci.org/mschuetz/toml)
 
+As of this writing, it successfully parses the parts of `hard_example.toml` [473c4a85](https://github.com/mojombo/toml/blob/473c4a85789da8c73df762b7ad985a6c0c2cf028/tests/hard_example.toml) that should work.
+
 ## Usage Example:
 
 	import es.wobbl.toml.Toml;
