@@ -1,6 +1,6 @@
 # A TOML Parser for Java
 A [TOML](https://github.com/mojombo/toml) parser for Java powered by [ANTLR 4](http://antlr.org).
-[![Build Status](https://secure.travis-ci.org/mschuetz/wp_comments_classifier.png?branch=master)](http://travis-ci.org/mschuetz/wp_comments_classifier)
+[![Build Status](https://secure.travis-ci.org/mschuetz/toml)](http://travis-ci.org/mschuetz/toml)
 
 ## Example Usage:
 
