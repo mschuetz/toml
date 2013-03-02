@@ -18,18 +18,21 @@ import org.antlr.v4.runtime.misc.Pair;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
-import es.wobbl.toml.TomlParser.ArrayContext;
-import es.wobbl.toml.TomlParser.BoolContext;
-import es.wobbl.toml.TomlParser.DatetimeContext;
-import es.wobbl.toml.TomlParser.HeaderContext;
-import es.wobbl.toml.TomlParser.NameContext;
-import es.wobbl.toml.TomlParser.NumberContext;
-import es.wobbl.toml.TomlParser.ObjectContext;
-import es.wobbl.toml.TomlParser.ObjectnameContext;
-import es.wobbl.toml.TomlParser.PairContext;
-import es.wobbl.toml.TomlParser.StringContext;
-import es.wobbl.toml.TomlParser.TomlContext;
-import es.wobbl.toml.TomlParser.ValueContext;
+import es.wobbl.toml.grammar.TomlBaseVisitor;
+import es.wobbl.toml.grammar.TomlLexer;
+import es.wobbl.toml.grammar.TomlParser;
+import es.wobbl.toml.grammar.TomlParser.ArrayContext;
+import es.wobbl.toml.grammar.TomlParser.BoolContext;
+import es.wobbl.toml.grammar.TomlParser.DatetimeContext;
+import es.wobbl.toml.grammar.TomlParser.HeaderContext;
+import es.wobbl.toml.grammar.TomlParser.NameContext;
+import es.wobbl.toml.grammar.TomlParser.NumberContext;
+import es.wobbl.toml.grammar.TomlParser.ObjectContext;
+import es.wobbl.toml.grammar.TomlParser.ObjectnameContext;
+import es.wobbl.toml.grammar.TomlParser.PairContext;
+import es.wobbl.toml.grammar.TomlParser.StringContext;
+import es.wobbl.toml.grammar.TomlParser.TomlContext;
+import es.wobbl.toml.grammar.TomlParser.ValueContext;
 
 public final class Toml {
 
