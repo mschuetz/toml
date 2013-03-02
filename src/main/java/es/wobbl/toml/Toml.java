@@ -1,5 +1,6 @@
 package es.wobbl.toml;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -14,6 +15,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Pair;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 import es.wobbl.toml.TomlParser.ArrayContext;
@@ -29,32 +31,64 @@ import es.wobbl.toml.TomlParser.StringContext;
 import es.wobbl.toml.TomlParser.TomlContext;
 import es.wobbl.toml.TomlParser.ValueContext;
 
-public class Toml extends TomlBaseVisitor<KeyGroup> {
+public final class Toml {
+
+	/**
+	 * Parses a toml document from an input stream
+	 * 
+	 * @param in
+	 *            an input stream containing a toml document
+	 * @return an unnamed root {@link KeyGroup} containing the top level key
+	 *         value pairs and key groups of the document
+	 */
+	public static KeyGroup parse(InputStream in) throws IOException {
+		final TomlLexer lexer = new TomlLexer(new ANTLRInputStream(in));
+		final TomlParser parser = new TomlParser(new CommonTokenStream(lexer));
+		return KEY_GROUP_VISITORS.visit(parser.toml());
+	}
+
+	public static KeyGroup parse(String toml) throws IOException {
+		return parse(new ByteArrayInputStream(toml.getBytes(Charsets.UTF_8)));
+	}
 
 	private static final StringVisitors STRING_VISITORS = new StringVisitors();
 	private static final PairVisitor PAIR_VISITOR = new PairVisitor();
 	private static final ObjectVisitors OBJECT_VISITORS = new ObjectVisitors();
-	private static final Toml INSTANCE = new Toml();
+	private static final KeyGroupVisitors KEY_GROUP_VISITORS = new KeyGroupVisitors();
 
 	private Toml() {
 	}
 
-	public static KeyGroup parse(InputStream in) throws IOException {
-		final TomlLexer lexer = new TomlLexer(new ANTLRInputStream(in));
-		final TomlParser parser = new TomlParser(new CommonTokenStream(lexer));
-		return INSTANCE.visit(parser.toml());
-	}
+	private static class KeyGroupVisitors extends TomlBaseVisitor<KeyGroup> {
+		@Override
+		public KeyGroup visitToml(TomlContext ctx) {
+			final KeyGroup root = new KeyGroup("", true);
+			visitPairs(ctx, root);
+			for (final ObjectContext object : ctx.object()) {
+				final KeyGroup keyGroup = visitObject(object);
+				root.putRecursive(keyGroup.getName(), keyGroup);
+			}
 
-	@Override
-	public KeyGroup visitToml(TomlContext ctx) {
-		final KeyGroup root = new KeyGroup("", true);
-		visitPairs(ctx, root);
-		for (final ObjectContext object : ctx.object()) {
-			final KeyGroup keyGroup = visitObject(object);
-			root.putRecursive(keyGroup.getName(), keyGroup);
+			return root;
 		}
 
-		return root;
+		private void visitPairs(ParserRuleContext ctx, KeyGroup keyGroup) {
+			for (int i = 0; i < ctx.getChildCount(); i++) {
+				final PairContext pairCtx = ctx.getChild(PairContext.class, i);
+				if (pairCtx == null)
+					break;
+				final Pair<String, Object> pair = PAIR_VISITOR.visitPair(pairCtx);
+				keyGroup.put(pair.a, pair.b);
+			}
+		}
+
+		@Override
+		public KeyGroup visitObject(ObjectContext ctx) {
+			final String objectName = STRING_VISITORS.visitHeader(ctx.header());
+			final KeyGroup keyGroup = new KeyGroup(objectName);
+			visitPairs(ctx, keyGroup);
+			return keyGroup;
+		}
 	}
 
 	private static class StringVisitors extends TomlBaseVisitor<String> {
@@ -130,23 +164,5 @@ public class Toml extends TomlBaseVisitor<KeyGroup> {
 			return arr;
 		}
 
-	}
-
-	private void visitPairs(ParserRuleContext ctx, KeyGroup keyGroup) {
-		for (int i = 0; i < ctx.getChildCount(); i++) {
-			final PairContext pairCtx = ctx.getChild(PairContext.class, i);
-			if (pairCtx == null)
-				break;
-			final Pair<String, Object> pair = PAIR_VISITOR.visitPair(pairCtx);
-			keyGroup.put(pair.a, pair.b);
-		}
-	}
-
-	@Override
-	public KeyGroup visitObject(ObjectContext ctx) {
-		final String objectName = STRING_VISITORS.visitHeader(ctx.header());
-		final KeyGroup keyGroup = new KeyGroup(objectName);
-		visitPairs(ctx, keyGroup);
-		return keyGroup;
 	}
 }
