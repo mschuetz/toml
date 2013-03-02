@@ -56,10 +56,17 @@ public class KeyGroupTest {
 	}
 
 	@Test
+	public void testSpecialCharsInHeader() throws IOException {
+		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/sample1.toml"));
+		assertEquals("lentil", root.getString("legume#works\"[.type"));
+	}
+
+	@Test
 	public void testSerialization() throws IOException {
 		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/full.toml"));
 		final StringBuilder out = new StringBuilder();
 		root.toToml(out);
+		// root.toToml(System.out);
 		final KeyGroup root2 = Toml.parse(out.toString());
 		assertEquals(root, root2);
 	}

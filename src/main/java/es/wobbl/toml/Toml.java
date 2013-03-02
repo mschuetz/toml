@@ -28,7 +28,6 @@ import es.wobbl.toml.grammar.TomlParser.HeaderContext;
 import es.wobbl.toml.grammar.TomlParser.NameContext;
 import es.wobbl.toml.grammar.TomlParser.NumberContext;
 import es.wobbl.toml.grammar.TomlParser.ObjectContext;
-import es.wobbl.toml.grammar.TomlParser.ObjectnameContext;
 import es.wobbl.toml.grammar.TomlParser.PairContext;
 import es.wobbl.toml.grammar.TomlParser.StringContext;
 import es.wobbl.toml.grammar.TomlParser.TomlContext;
@@ -97,12 +96,8 @@ public final class Toml {
 	private static class StringVisitors extends TomlBaseVisitor<String> {
 		@Override
 		public String visitHeader(HeaderContext ctx) {
-			return visitObjectname(ctx.objectname());
-		}
-
-		@Override
-		public String visitObjectname(ObjectnameContext ctx) {
-			return ctx.getText();
+			final String s = ctx.getText();
+			return s.substring(1, s.length() - 1);
 		}
 
 		@Override

@@ -1,8 +1,16 @@
 grammar Toml;
 
+@lexer::members {
+    boolean in_value = false;
+}
+
 toml : NL* pair* object+ ;
 
 object : header NL+ pair* NL+;
+
+header : HEADER;
+ 
+HEADER : { !in_value }? '[' ~[\]]+ ']' ;
 
 value
     : string
@@ -25,7 +33,9 @@ fragment SECOND : DIGIT2 ;
 fragment DIGIT4 : DIGIT DIGIT DIGIT DIGIT ;
 fragment DIGIT2 : DIGIT DIGIT ;
 
-pair : name '=' value NL+;
+pair : name ASSIGN value NL+;
+
+ASSIGN : '=' { in_value = true; };
 
 name : ID ;
 
@@ -40,16 +50,12 @@ number : NUMBER ;
 bool : BOOLEAN ;
 datetime : ISO8601 ;
 
-NL : [\r\n] ;
+NL : '\r'? '\n' { in_value = false; };
 
 BOOLEAN
     : 'true'
     | 'false'
     ;
-
-header : '[' objectname ']';
-
-objectname : ID ('.' ID)* ;
 
 fragment DIGIT : [0-9] ;
 
