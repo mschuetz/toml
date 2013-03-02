@@ -5,9 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -130,7 +128,24 @@ public class KeyGroup {
 	}
 
 	@Override
+	public int hashCode() {
+		return Objects.hashCode(name, root, members);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+
+		if (!(obj instanceof KeyGroup))
+			return false;
+
+		final KeyGroup other = (KeyGroup) obj;
+		return Objects.equal(name, other.name) && Objects.equal(root, other.root) && Objects.equal(members, other.members);
+	}
+
+	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+		return Objects.toStringHelper(this).add("name", name).add("isRoot", root).add("members", members).toString();
 	}
 }
