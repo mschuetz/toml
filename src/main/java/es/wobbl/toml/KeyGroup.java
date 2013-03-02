@@ -1,6 +1,7 @@
 package es.wobbl.toml;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -47,6 +48,15 @@ public class KeyGroup {
 			i++;
 		}
 		throw new IllegalStateException("unreachable");
+	}
+
+	public <T> List<T> getList(String path, Class<T> klazz) {
+		@SuppressWarnings("unchecked")
+		final List<T> list = (List<T>) get(path);
+		if (!list.isEmpty())
+			Preconditions.checkArgument(klazz.isAssignableFrom(list.get(0).getClass()),
+					"incompatible list type requested. actual: %s", list.get(0).getClass());
+		return list;
 	}
 
 	public String getString(String path) {
