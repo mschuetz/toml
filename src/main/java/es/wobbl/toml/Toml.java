@@ -75,6 +75,14 @@ public final class Toml {
 			return root;
 		}
 
+		@Override
+		public KeyGroup visitObject(ObjectContext ctx) {
+			final String objectName = STRING_VISITORS.visitHeader(ctx.header());
+			final KeyGroup keyGroup = new KeyGroup(objectName);
+			visitPairs(ctx, keyGroup);
+			return keyGroup;
+		}
+
 		private void visitPairs(ParserRuleContext ctx, KeyGroup keyGroup) {
 			for (int i = 0; i < ctx.getChildCount(); i++) {
 				final PairContext pairCtx = ctx.getChild(PairContext.class, i);
@@ -83,14 +91,6 @@ public final class Toml {
 				final Pair<String, Object> pair = PAIR_VISITOR.visitPair(pairCtx);
 				keyGroup.put(pair.a, pair.b);
 			}
-		}
-
-		@Override
-		public KeyGroup visitObject(ObjectContext ctx) {
-			final String objectName = STRING_VISITORS.visitHeader(ctx.header());
-			final KeyGroup keyGroup = new KeyGroup(objectName);
-			visitPairs(ctx, keyGroup);
-			return keyGroup;
 		}
 	}
 
