@@ -20,6 +20,18 @@ public class SerializerTest {
 			public final Object obj = new Object() {
 				public final List<Integer> bar2 = ImmutableList.of(1, 2, 3);
 				public final String myName2 = "toml";
+				public final Object obj = new Object() {
+					public final List<Integer> bar2 = ImmutableList.of(1, 2, 3);
+					public final String myName2 = "toml";
+				};
+			};
+			public final Object obj2 = new Object() {
+				public final List<Integer> bar2 = ImmutableList.of(1, 2, 3);
+				public final String myName2 = "toml";
+				public final Object obj = new Object() {
+					public final List<Integer> bar2 = ImmutableList.of(1, 2, 3);
+					public final String myName2 = "toml";
+				};
 			};
 		}, System.out);
 	}

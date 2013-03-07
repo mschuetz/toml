@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -81,6 +82,14 @@ public class Serializer {
 
 	// TODO: handle arrays
 	public static void serialize(Object o, Appendable out) throws IOException {
+		serialize("", o, out);
+	}
+
+	public static void serialize(String path, Object o, Appendable out) throws IOException {
+		// if not root object
+		if (!Strings.isNullOrEmpty(path))
+			out.append('[').append(path).append("]\n");
+
 		if (o instanceof KeyGroup) {
 			serialize((KeyGroup) o, out);
 			return;
@@ -98,14 +107,12 @@ public class Serializer {
 		for (final Entry<String, Object> field : fields) {
 			final Object cur = field.getValue();
 			if (!Util.isTomlPrimitive(cur)) {
-				serialize(field.getKey(), field.getValue(), out);
+				if (Strings.isNullOrEmpty(path))
+					serialize(field.getKey(), field.getValue(), out);
+				else
+					serialize(path + "." + field.getKey(), field.getValue(), out);
 			}
 		}
-	}
-
-	public static void serialize(String name, Object o, Appendable out) throws IOException {
-		out.append('[').append(name).append("]\n");
-		serialize(o, out);
 	}
 
 	public static void serialize(KeyGroup obj, Appendable out) throws IOException {
