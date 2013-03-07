@@ -64,20 +64,10 @@ public class KeyGroupTest {
 	}
 
 	@Test
-	public void testSerialization() throws IOException {
-		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/full.toml"));
-		final StringBuilder out = new StringBuilder();
-		root.toToml(out);
-		// root.toToml(System.out);
-		final KeyGroup root2 = Toml.parse(out.toString());
-		assertEquals(root, root2);
-	}
-
-	@Test
 	public void testHardExample() throws IOException {
 		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/hard_example.toml"));
 		final StringBuilder out = new StringBuilder();
-		root.toToml(out);
+		Serializer.serialize(root, out);
 		final KeyGroup root2 = Toml.parse(out.toString());
 		// assertEquals(root, root2);
 		assertEquals(ImmutableList.of("] ", " # "), root.getList("the.hard.test_array", String.class));
@@ -86,7 +76,6 @@ public class KeyGroupTest {
 		assertEquals(" And when \"'s are in the string, along with # \"", root.getString("the.hard.harder_test_string"));
 
 		assertEquals("You don't think some user won't do that?", root.getString("the.hard.bit#.what?"));
-
 		assertEquals(ImmutableList.of("]"), root.getList("the.hard.bit#.multi_line_array", String.class));
 	}
 }
