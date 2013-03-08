@@ -6,7 +6,7 @@ grammar Toml;
 
 toml : NL* pair* object+ ;
 
-object : header NL+ pair* NL+;
+object : header NL+ pair* NL*;
 
 header : HEADER;
  
@@ -39,7 +39,8 @@ ASSIGN : '=' { in_value = true; };
 
 name : ID ;
 
-ID :  { !in_value }? NameChar ~[ \t=]+;
+// TODO if i remove namechar, lots of test documents fail. why?
+ID :  { !in_value }? NameChar ~[ \t=]*;
 
 array
     : '[' NL* value ( NL* ',' NL* value)* NL* ','?  NL* ']'

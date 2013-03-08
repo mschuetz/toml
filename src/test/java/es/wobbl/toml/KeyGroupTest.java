@@ -64,6 +64,12 @@ public class KeyGroupTest {
 	}
 
 	@Test
+	public void testTopLevel() throws IOException {
+		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/full.toml"));
+		assertEquals("TOML Example", root.getString("title"));
+	}
+
+	@Test
 	public void testHardExample() throws IOException {
 		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/hard_example.toml"));
 		final StringBuilder out = new StringBuilder();

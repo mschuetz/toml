@@ -3,9 +3,12 @@ package es.wobbl.toml;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -97,16 +100,16 @@ public class Serializer {
 		final Iterable<Entry<String, Object>> fields = iterFields(o);
 		for (final Entry<String, Object> field : fields) {
 			final Object cur = field.getValue();
-			if (Util.isTomlPrimitive(cur)) {
+			if (isTomlPrimitive(cur)) {
 				out.append(field.getKey()).append(" = ");
-				Util.serializeValue(out, cur);
+				serializeValue(out, cur);
 				out.append('\n');
 			}
 		}
 
 		for (final Entry<String, Object> field : fields) {
 			final Object cur = field.getValue();
-			if (!Util.isTomlPrimitive(cur)) {
+			if (!isTomlPrimitive(cur)) {
 				if (Strings.isNullOrEmpty(path))
 					serialize(field.getKey(), field.getValue(), out);
 				else
@@ -121,21 +124,69 @@ public class Serializer {
 
 		for (final Map.Entry<String, Object> entry : obj.entrySet()) {
 			final Object cur = entry.getValue();
-			if (!Util.isTomlPrimitive(cur))
+			if (!isTomlPrimitive(cur))
 				continue;
 			out.append(entry.getKey()).append(" = ");
 
-			Util.serializeValue(out, cur);
+			serializeValue(out, cur);
 			out.append('\n');
 		}
 
 		for (final Map.Entry<String, Object> entry : obj.entrySet()) {
 			final Object cur = entry.getValue();
-			if (!Util.isTomlPrimitive(cur)) {
+			if (!isTomlPrimitive(cur)) {
 				serialize(cur, out);
 				out.append('\n');
 			}
 		}
+	}
+
+	public static String escape(String s) {
+		return s.replace("\\", "\\\\").replace("\0", "\\0").replace("\t", "\\t").replace("\n", "\\n").replace("\r", "\\r")
+				.replace("\"", "\\\"");
+	}
+
+	public static void serializeValue(Appendable out, final Object obj) throws IOException {
+		if (obj instanceof Calendar) {
+			out.append(DatatypeConverter.printDateTime((Calendar) obj));
+		} else if (obj instanceof Iterable<?>) {
+			out.append('[');
+			final Iterable<?> iterable = (Iterable<?>) obj;
+			for (final Iterator<?> it = iterable.iterator(); it.hasNext();) {
+				serializeValue(out, it.next());
+				if (it.hasNext())
+					out.append(", ");
+			}
+			out.append(']');
+		} else if (obj instanceof CharSequence) {
+			out.append('"');
+			out.append(escape(obj.toString()));
+			out.append('"');
+		} else if (obj instanceof Number || obj instanceof Boolean) {
+			out.append(obj.toString());
+		}
+	}
+
+	/**
+	 * @return true if the object is of a type that may be the right-hand side
+	 *         of an assignment in toml. Currently this means, if it's not one
+	 *         of Long, Double, String, Calendar, Iterables except Maps, which
+	 *         are handled like objects
+	 */
+	public static boolean isTomlPrimitive(Object o) {
+		/*
+		 * regarding numbers, what I really would like to check is: if it is a
+		 * floating point number: check if it's within the bounds of double if
+		 * it is an integer: check if it's within the bounds of a signed long
+		 * 
+		 * problem: How do I generically find out whether a child class of
+		 * Number is fixed or floating? all they have in common are conversion
+		 * methods like intValue longValue...
+		 * 
+		 * idea: call longValue & doubleValue and check for equality.
+		 */
+		return (o instanceof Number) || (o instanceof CharSequence) || (o instanceof Calendar) || (o instanceof Boolean)
+				|| ((o instanceof Iterable) && !((o instanceof Map)));
 	}
 
 }
