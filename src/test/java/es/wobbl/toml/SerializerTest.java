@@ -1,10 +1,8 @@
 package es.wobbl.toml;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.List;
 
 import org.junit.Test;
@@ -18,6 +16,7 @@ public class SerializerTest {
 		Serializer.serialize(new Object() {
 			public final byte b = 1;
 			public final int foo = 1;
+			public final Integer[] array = { 1, 2, 3 };
 			public final List<Integer> bar = ImmutableList.of(1, 2, 3);
 			public final String myName = "toml";
 			public final Object obj = new Object() {
@@ -42,6 +41,7 @@ public class SerializerTest {
 		System.out.println("-------------");
 		Serializer.serialize(root, System.out);
 		final ImmutableList<Long> list = ImmutableList.of(1L, 2L, 3L);
+		assertEquals(list, root.getList("array", Long.class));
 		assertEquals(list, root.getList("bar", Long.class));
 		assertEquals(list, root.getList("obj.bar2", Long.class));
 		assertEquals(list, root.getList("obj.obj.bar2", Long.class));

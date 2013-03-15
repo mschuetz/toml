@@ -83,7 +83,6 @@ public class Serializer {
 		};
 	}
 
-	// TODO: handle arrays
 	public static void serialize(Object o, Appendable out) throws IOException {
 		serialize("", o, out);
 	}
@@ -146,6 +145,7 @@ public class Serializer {
 				.replace("\"", "\\\"");
 	}
 
+	// TODO: handle arrays
 	public static void serializeValue(Appendable out, final Object obj) throws IOException {
 		if (obj instanceof Calendar) {
 			out.append(DatatypeConverter.printDateTime((Calendar) obj));
@@ -155,6 +155,15 @@ public class Serializer {
 			for (final Iterator<?> it = iterable.iterator(); it.hasNext();) {
 				serializeValue(out, it.next());
 				if (it.hasNext())
+					out.append(", ");
+			}
+			out.append(']');
+		} else if (obj instanceof Object[]) {
+			out.append('[');
+			final Object[] arr = (Object[]) obj;
+			for (int i = 0; i < arr.length; i++) {
+				serializeValue(out, arr[i]);
+				if (i < arr.length - 1)
 					out.append(", ");
 			}
 			out.append(']');
@@ -183,10 +192,11 @@ public class Serializer {
 		 * Number is fixed or floating? all they have in common are conversion
 		 * methods like intValue longValue...
 		 * 
-		 * idea: call longValue & doubleValue and check for equality.
+		 * <s>idea: call longValue & doubleValue and check for equality.</s>
+		 * doesn't work
 		 */
 		return (o instanceof Number) || (o instanceof CharSequence) || (o instanceof Calendar) || (o instanceof Boolean)
-				|| ((o instanceof Iterable) && !((o instanceof Map)));
+				|| ((o instanceof Iterable) && !((o instanceof Map))) || (o.getClass().isArray());
 	}
 
 }
