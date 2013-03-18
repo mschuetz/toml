@@ -1,6 +1,7 @@
 package es.wobbl.toml;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Calendar;
@@ -167,6 +168,25 @@ public class Serializer {
 					out.append(", ");
 			}
 			out.append(']');
+		} else if (obj.getClass().isArray()) {
+			// handle primitive array separately as they cannot be cast to
+			// Object[]
+			out.append('[');
+			for (int i = 0; i < Integer.MAX_VALUE; i++) {
+				try {
+					final Object element = Array.get(obj, i);
+					serializeValue(out, element);
+				} catch (final IndexOutOfBoundsException e) {
+					break;
+				}
+				try {
+					Array.get(obj, i + 1);
+				} catch (final IndexOutOfBoundsException e) {
+					continue;
+				}
+				out.append(", ");
+			}
+			out.append(']');
 		} else if (obj instanceof CharSequence) {
 			out.append('"');
 			out.append(escape(obj.toString()));
@@ -198,5 +218,4 @@ public class Serializer {
 		return (o instanceof Number) || (o instanceof CharSequence) || (o instanceof Calendar) || (o instanceof Boolean)
 				|| ((o instanceof Iterable) && !((o instanceof Map))) || (o.getClass().isArray());
 	}
-
 }
