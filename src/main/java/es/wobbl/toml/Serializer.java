@@ -55,33 +55,26 @@ public class Serializer {
 
 	static Iterable<Entry<String, Object>> iterFields(final Object o) {
 
-		return new Iterable<Entry<String, Object>>() {
+		return Iterables.transform(Iterables.filter(Lists.newArrayList(o.getClass().getFields()), new Predicate<Field>() {
 
 			@Override
-			public Iterator<Entry<String, Object>> iterator() {
-				// TODO get lazy iterator of array
-				return Iterables.transform(Iterables.filter(Lists.newArrayList(o.getClass().getFields()), new Predicate<Field>() {
-
-					@Override
-					public boolean apply(Field field) {
-						final int mods = field.getModifiers();
-						return /* field.isAccessible() && */Modifier.isPublic(mods) && !Modifier.isStatic(mods);
-					}
-				}), new Function<Field, Entry<String, Object>>() {
-
-					@Override
-					public Entry<String, Object> apply(Field field) {
-						try {
-							return new TomlField(field.getName(), field.get(o));
-						} catch (final IllegalAccessException e) {
-							throw new RuntimeException(
-									"checked if a field was accessible but it turned out not to be. should not happen", e);
-						}
-					}
-
-				}).iterator();
+			public boolean apply(Field field) {
+				final int mods = field.getModifiers();
+				return /* field.isAccessible() && */Modifier.isPublic(mods) && !Modifier.isStatic(mods);
 			}
-		};
+		}), new Function<Field, Entry<String, Object>>() {
+
+			@Override
+			public Entry<String, Object> apply(Field field) {
+				try {
+					return new TomlField(field.getName(), field.get(o));
+				} catch (final IllegalAccessException e) {
+					throw new RuntimeException(
+							"checked if a field was accessible but it turned out not to be. should not happen", e);
+				}
+			}
+
+		});
 	}
 
 	public static void serialize(Object o, Appendable out) throws IOException {
