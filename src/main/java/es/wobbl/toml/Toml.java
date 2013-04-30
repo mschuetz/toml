@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Pair;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -141,8 +142,7 @@ public final class Toml {
 		public String visitString(StringContext ctx) {
 			// extract between quotes and unescape
 			final String s = ctx.getText();
-			return s.substring(1, s.length() - 1).replace("\\0", "\0").replace("\\t", "\t").replace("\\n", "\n")
-					.replace("\\r", "\r").replace("\\\"", "\"").replace("\\\\", "\\");
+			return StringEscapeUtils.unescapeJava(s.substring(1, s.length() - 1));
 		}
 
 		@Override

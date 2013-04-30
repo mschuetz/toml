@@ -12,6 +12,13 @@ import com.google.common.collect.ImmutableList;
 public class KeyGroupTest {
 
 	@Test
+	public void testUnicodeEscapeSequence() throws IOException {
+		final String src = "[unicode]\nsnowman = \"\\u2603\"";
+		final KeyGroup kg = Toml.parse(src);
+		assertEquals(kg.getString("unicode.snowman"), "☃");
+	}
+
+	@Test
 	public void testRecursiveKeyLookup() {
 		final KeyGroup root = new KeyGroup("root");
 		final KeyGroup c1 = new KeyGroup("c1");
