@@ -3,6 +3,7 @@ package es.wobbl.toml;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +45,8 @@ public final class Toml {
 	 *         value pairs and key groups of the document
 	 */
 	public static KeyGroup parse(InputStream in) throws IOException {
-		final TomlLexer lexer = new TomlLexer(new ANTLRInputStream(in));
+		final InputStreamReader reader = new InputStreamReader(in, Charsets.UTF_8);
+		final TomlLexer lexer = new TomlLexer(new ANTLRInputStream(reader));
 		final TomlParser parser = new TomlParser(new CommonTokenStream(lexer));
 		return KEY_GROUP_VISITORS.visit(parser.toml());
 	}
