@@ -91,4 +91,10 @@ public class KeyGroupTest {
 		assertEquals("You don't think some user won't do that?", root.getString("the.hard.bit#.what?"));
 		assertEquals(ImmutableList.of("]"), root.getList("the.hard.bit#.multi_line_array", String.class));
 	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetListIncompatibleType() throws IOException {
+		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/types.toml"));
+		root.getList("types_in_arrays.string", Long.class);
+	}
 }
