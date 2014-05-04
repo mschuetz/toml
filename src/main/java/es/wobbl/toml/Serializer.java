@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -122,11 +124,6 @@ public class Serializer {
 		}
 	}
 
-	public static String escape(String s) {
-		return s.replace("\\", "\\\\").replace("\0", "\\0").replace("\t", "\\t").replace("\n", "\\n").replace("\r", "\\r")
-				.replace("\"", "\\\"");
-	}
-
 	public static void serializeValue(Object obj, Appendable out) throws IOException {
 		if (obj instanceof Calendar) {
 			out.append(DatatypeConverter.printDateTime((Calendar) obj));
@@ -169,7 +166,7 @@ public class Serializer {
 			out.append(']');
 		} else if (obj instanceof CharSequence) {
 			out.append('"');
-			out.append(escape(obj.toString()));
+			out.append(StringEscapeUtils.escapeJava(obj.toString()));
 			out.append('"');
 		} else if (obj instanceof Number || obj instanceof Boolean) {
 			out.append(obj.toString());
