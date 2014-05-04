@@ -2,7 +2,6 @@ package es.wobbl.toml;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -11,8 +10,6 @@ import java.util.Map.Entry;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -54,26 +51,17 @@ public class Serializer {
 	}
 
 	static Iterable<Entry<String, Object>> iterFields(final Object o) {
-
-		return Iterables.transform(Iterables.filter(Lists.newArrayList(o.getClass().getFields()), new Predicate<Field>() {
-
-			@Override
-			public boolean apply(Field field) {
-				final int mods = field.getModifiers();
-				return /* field.isAccessible() && */Modifier.isPublic(mods) && !Modifier.isStatic(mods);
+		return Iterables.transform(Iterables.filter(Lists.newArrayList(o.getClass().getFields()), field -> {
+			final int mods = field.getModifiers();
+			return /* field.isAccessible() && */Modifier.isPublic(mods) && !Modifier.isStatic(mods);
+		}),
+		field -> {
+			try {
+				return new TomlField(field.getName(), field.get(o));
+			} catch (final IllegalAccessException e) {
+				throw new RuntimeException(
+						"checked if a field was accessible but it turned out not to be. should not happen", e);
 			}
-		}), new Function<Field, Entry<String, Object>>() {
-
-			@Override
-			public Entry<String, Object> apply(Field field) {
-				try {
-					return new TomlField(field.getName(), field.get(o));
-				} catch (final IllegalAccessException e) {
-					throw new RuntimeException(
-							"checked if a field was accessible but it turned out not to be. should not happen", e);
-				}
-			}
-
 		});
 	}
 
@@ -200,11 +188,11 @@ public class Serializer {
 		 * regarding numbers, what I really would like to check is: if it is a
 		 * floating point number: check if it's within the bounds of double if
 		 * it is an integer: check if it's within the bounds of a signed long
-		 * 
+		 *
 		 * problem: How do I generically find out whether a child class of
 		 * Number is fixed or floating? all they have in common are conversion
 		 * methods like intValue longValue...
-		 * 
+		 *
 		 * <s>idea: call longValue & doubleValue and check for equality.</s>
 		 * doesn't work
 		 */
