@@ -83,7 +83,7 @@ public class Serializer {
 			final Object cur = field.getValue();
 			if (isTomlPrimitive(cur)) {
 				out.append(field.getKey()).append(" = ");
-				serializeValue(out, cur);
+				serializeValue(cur, out);
 				out.append('\n');
 			}
 		}
@@ -109,7 +109,7 @@ public class Serializer {
 				continue;
 			out.append(entry.getKey()).append(" = ");
 
-			serializeValue(out, cur);
+			serializeValue(cur, out);
 			out.append('\n');
 		}
 
@@ -127,15 +127,14 @@ public class Serializer {
 				.replace("\"", "\\\"");
 	}
 
-	// TODO: handle arrays
-	public static void serializeValue(Appendable out, final Object obj) throws IOException {
+	public static void serializeValue(Object obj, Appendable out) throws IOException {
 		if (obj instanceof Calendar) {
 			out.append(DatatypeConverter.printDateTime((Calendar) obj));
 		} else if (obj instanceof Iterable<?>) {
 			out.append('[');
 			final Iterable<?> iterable = (Iterable<?>) obj;
 			for (final Iterator<?> it = iterable.iterator(); it.hasNext();) {
-				serializeValue(out, it.next());
+				serializeValue(it.next(), out);
 				if (it.hasNext())
 					out.append(", ");
 			}
@@ -144,7 +143,7 @@ public class Serializer {
 			out.append('[');
 			final Object[] arr = (Object[]) obj;
 			for (int i = 0; i < arr.length; i++) {
-				serializeValue(out, arr[i]);
+				serializeValue(arr[i], out);
 				if (i < arr.length - 1)
 					out.append(", ");
 			}
@@ -156,7 +155,7 @@ public class Serializer {
 			for (int i = 0; i < Integer.MAX_VALUE; i++) {
 				try {
 					final Object element = Array.get(obj, i);
-					serializeValue(out, element);
+					serializeValue(element, out);
 				} catch (final IndexOutOfBoundsException e) {
 					break;
 				}
