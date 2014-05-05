@@ -3,18 +3,18 @@ package es.wobbl.toml;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 public class Serializer {
 
@@ -48,23 +48,25 @@ public class Serializer {
 		}
 	}
 
-	static Iterable<Entry<String, Object>> iterFields(final Map<String, Object> map) {
-		return map.entrySet();
+	static Stream<Entry<String, Object>> streamFields(final Map<String, Object> map) {
+		return map.entrySet().stream();
 	}
 
-	static Iterable<Entry<String, Object>> iterFields(final Object o) {
-		return Iterables.transform(Iterables.filter(Lists.newArrayList(o.getClass().getFields()), field -> {
-			final int mods = field.getModifiers();
-			return /* field.isAccessible() && */Modifier.isPublic(mods) && !Modifier.isStatic(mods);
-		}),
-		field -> {
-			try {
-				return new TomlField(field.getName(), field.get(o));
-			} catch (final IllegalAccessException e) {
-				throw new RuntimeException(
-						"checked if a field was accessible but it turned out not to be. should not happen", e);
-			}
-		});
+	static Stream<Entry<String, Object>> streamFields(final Object o) {
+		return Arrays
+				.stream(o.getClass().getFields())
+				.filter(field -> {
+					final int mods = field.getModifiers();
+					return /* field.isAccessible() && */Modifier.isPublic(mods) && !Modifier.isStatic(mods);
+				})
+				.map(field -> {
+					try {
+						return new TomlField(field.getName(), field.get(o));
+					} catch (final IllegalAccessException e) {
+						throw new RuntimeException(
+								"checked if a field was accessible but it turned out not to be. should not happen", e);
+					}
+				});
 	}
 
 	public static void serialize(Object o, Appendable out) throws IOException {
@@ -80,25 +82,22 @@ public class Serializer {
 			serialize((KeyGroup) o, out);
 			return;
 		}
-		final Iterable<Entry<String, Object>> fields = iterFields(o);
-		for (final Entry<String, Object> field : fields) {
-			final Object cur = field.getValue();
-			if (isTomlPrimitive(cur)) {
-				out.append(field.getKey()).append(" = ");
-				serializeValue(cur, out);
-				out.append('\n');
-			}
-		}
+		streamFields(o).filter(field -> {
+			return isTomlPrimitive(field.getValue());
+		}).forEach(IOExceptionWrapper.consumer(field -> {
+			out.append(field.getKey()).append(" = ");
+			serializeValue(field.getValue(), out);
+			out.append('\n');
+		}));
 
-		for (final Entry<String, Object> field : fields) {
-			final Object cur = field.getValue();
-			if (!isTomlPrimitive(cur)) {
-				if (Strings.isNullOrEmpty(path))
-					serialize(field.getKey(), field.getValue(), out);
-				else
-					serialize(path + "." + field.getKey(), field.getValue(), out);
-			}
-		}
+		streamFields(o).filter(field -> {
+			return !isTomlPrimitive(field.getValue());
+		}).forEach(IOExceptionWrapper.consumer(field -> {
+			if (Strings.isNullOrEmpty(path))
+				serialize(field.getKey(), field.getValue(), out);
+			else
+				serialize(path + "." + field.getKey(), field.getValue(), out);
+		}));
 	}
 
 	public static void serialize(KeyGroup obj, Appendable out) throws IOException {
@@ -184,11 +183,11 @@ public class Serializer {
 		 * regarding numbers, what I really would like to check is: if it is a
 		 * floating point number: check if it's within the bounds of double if
 		 * it is an integer: check if it's within the bounds of a signed long
-		 *
+		 * 
 		 * problem: How do I generically find out whether a child class of
 		 * Number is fixed or floating? all they have in common are conversion
 		 * methods like intValue longValue...
-		 *
+		 * 
 		 * <s>idea: call longValue & doubleValue and check for equality.</s>
 		 * doesn't work
 		 */
