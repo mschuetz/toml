@@ -49,11 +49,10 @@ public class Serializer {
 		}
 	}
 
-	private static Stream<Entry<String, Object>> streamFields(final Map<String, Object> map) {
-		return map.entrySet().stream();
-	}
-
 	private static Stream<Entry<String, Object>> streamFields(final Object o) {
+		if (o instanceof KeyGroup)
+			return ((KeyGroup) o).entrySet().stream();
+
 		return Arrays
 				.stream(o.getClass().getFields())
 				.filter(field -> {
@@ -79,10 +78,6 @@ public class Serializer {
 		if (!Strings.isNullOrEmpty(path))
 			out.append('[').append(path).append("]\n");
 
-		if (o instanceof KeyGroup) {
-			serialize((KeyGroup) o, out);
-			return;
-		}
 		streamFields(o).filter(field -> {
 			return isTomlPrimitive(field.getValue());
 		}).forEach(IOExceptionWrapper.consumer(field -> {
@@ -102,26 +97,8 @@ public class Serializer {
 	}
 
 	public static void serialize(KeyGroup obj, Appendable out) throws IOException {
-		if (!obj.isRoot())
-			out.append('[').append(obj.getName()).append("]\n");
-
-		for (final Map.Entry<String, Object> entry : obj.entrySet()) {
-			final Object cur = entry.getValue();
-			if (!isTomlPrimitive(cur))
-				continue;
-			out.append(entry.getKey()).append(" = ");
-
-			serializeValue(cur, out);
-			out.append('\n');
-		}
-
-		for (final Map.Entry<String, Object> entry : obj.entrySet()) {
-			final Object cur = entry.getValue();
-			if (!isTomlPrimitive(cur)) {
-				serialize(cur, out);
-				out.append('\n');
-			}
-		}
+		final String name = obj.isRoot() ? null : obj.getName();
+		serialize(name, obj, out);
 	}
 
 	private static void serializeDateTime(Temporal temporal, Appendable out) throws IOException {
@@ -192,11 +169,11 @@ public class Serializer {
 		 * regarding numbers, what I really would like to check is: if it is a
 		 * floating point number: check if it's within the bounds of double if
 		 * it is an integer: check if it's within the bounds of a signed long
-		 *
+		 * 
 		 * problem: How do I generically find out whether a child class of
 		 * Number is fixed or floating? all they have in common are conversion
 		 * methods like intValue longValue...
-		 *
+		 * 
 		 * <s>idea: call longValue & doubleValue and check for equality.</s>
 		 * doesn't work
 		 */
