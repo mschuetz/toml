@@ -3,16 +3,28 @@ package es.wobbl.toml;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
 public class SerializerTest {
+
+	StringBuilder out = null;
+
+	@Before
+	public void createOutput() {
+		out = new StringBuilder();
+	}
+
 	@Test
+	@SuppressWarnings("unused")
 	public void testPojoSerialization() throws IOException {
-		final StringBuilder out = new StringBuilder();
 		Serializer.serialize(new Object() {
 			public final byte b = 1;
 			public final int foo = 1;
@@ -55,9 +67,30 @@ public class SerializerTest {
 	@Test
 	public void testTomlSerialization() throws IOException {
 		final KeyGroup root = Toml.parse(VisitorTest.class.getResourceAsStream("/full.toml"));
-		final StringBuilder out = new StringBuilder();
 		Serializer.serialize(root, out);
 		final KeyGroup root2 = Toml.parse(out.toString());
 		assertEquals(root, root2);
+	}
+
+	@Test
+	public void testSerializeCalendar() throws Exception {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(0L);
+		Serializer.serializeValue(calendar, out);
+		assertEquals("1970-01-01T00:00:00Z", out.toString());
+	}
+
+	@Test
+	public void testSerializeDate() throws Exception {
+		final StringBuilder out = new StringBuilder();
+		Serializer.serializeValue(new Date(0L), out);
+		assertEquals("1970-01-01T00:00:00Z", out.toString());
+	}
+
+	@Test
+	public void testSerializeInstant() throws Exception {
+		final StringBuilder out = new StringBuilder();
+		Serializer.serializeValue(Instant.ofEpochMilli(0L), out);
+		assertEquals("1970-01-01T00:00:00Z", out.toString());
 	}
 }

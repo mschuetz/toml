@@ -3,14 +3,15 @@ package es.wobbl.toml;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -123,9 +124,17 @@ public class Serializer {
 		}
 	}
 
+	public static void serializeDateTime(Temporal temporal, Appendable out) throws IOException {
+		DateTimeFormatter.ISO_INSTANT.formatTo(temporal, out);
+	}
+
 	public static void serializeValue(Object obj, Appendable out) throws IOException {
 		if (obj instanceof Calendar) {
-			out.append(DatatypeConverter.printDateTime((Calendar) obj));
+			serializeDateTime(((Calendar) obj).toInstant(), out);
+		} else if (obj instanceof Date) {
+			serializeDateTime(((Date) obj).toInstant(), out);
+		} else if (obj instanceof Temporal) {
+			serializeDateTime((Temporal) obj, out);
 		} else if (obj instanceof Iterable<?>) {
 			out.append('[');
 			final Iterable<?> iterable = (Iterable<?>) obj;
@@ -183,11 +192,11 @@ public class Serializer {
 		 * regarding numbers, what I really would like to check is: if it is a
 		 * floating point number: check if it's within the bounds of double if
 		 * it is an integer: check if it's within the bounds of a signed long
-		 * 
+		 *
 		 * problem: How do I generically find out whether a child class of
 		 * Number is fixed or floating? all they have in common are conversion
 		 * methods like intValue longValue...
-		 * 
+		 *
 		 * <s>idea: call longValue & doubleValue and check for equality.</s>
 		 * doesn't work
 		 */
