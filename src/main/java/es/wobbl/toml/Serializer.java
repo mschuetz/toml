@@ -49,11 +49,11 @@ public class Serializer {
 		}
 	}
 
-	static Stream<Entry<String, Object>> streamFields(final Map<String, Object> map) {
+	private static Stream<Entry<String, Object>> streamFields(final Map<String, Object> map) {
 		return map.entrySet().stream();
 	}
 
-	static Stream<Entry<String, Object>> streamFields(final Object o) {
+	private static Stream<Entry<String, Object>> streamFields(final Object o) {
 		return Arrays
 				.stream(o.getClass().getFields())
 				.filter(field -> {
@@ -124,7 +124,7 @@ public class Serializer {
 		}
 	}
 
-	public static void serializeDateTime(Temporal temporal, Appendable out) throws IOException {
+	private static void serializeDateTime(Temporal temporal, Appendable out) throws IOException {
 		DateTimeFormatter.ISO_INSTANT.formatTo(temporal, out);
 	}
 
