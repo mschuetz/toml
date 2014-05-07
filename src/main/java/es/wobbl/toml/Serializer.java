@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,36 +20,6 @@ import com.google.common.base.Strings;
 
 public class Serializer {
 
-	private static class TomlField implements Entry<String, Object> {
-		final String name;
-		final Object o;
-
-		public TomlField(String name, Object o) {
-			this.name = name;
-			this.o = o;
-		}
-
-		@Override
-		public String toString() {
-			return "TomlField [name=" + name + ", o=" + o + "]";
-		}
-
-		@Override
-		public String getKey() {
-			return name;
-		}
-
-		@Override
-		public Object getValue() {
-			return o;
-		}
-
-		@Override
-		public Object setValue(Object value) {
-			throw new UnsupportedOperationException("immutable entry");
-		}
-	}
-
 	private static Stream<Entry<String, Object>> streamFields(final Object o) {
 		if (o instanceof KeyGroup)
 			return ((KeyGroup) o).entrySet().stream();
@@ -61,7 +32,7 @@ public class Serializer {
 				})
 				.map(field -> {
 					try {
-						return new TomlField(field.getName(), field.get(o));
+						return new AbstractMap.SimpleEntry<String, Object>(field.getName(), field.get(o));
 					} catch (final IllegalAccessException e) {
 						throw new RuntimeException(
 								"checked if a field was accessible but it turned out not to be. should not happen", e);
