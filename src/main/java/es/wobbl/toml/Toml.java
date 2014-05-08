@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -17,7 +18,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Pair;
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 import es.wobbl.toml.grammar.TomlBaseVisitor;
@@ -39,21 +39,21 @@ public final class Toml {
 
 	/**
 	 * Parses a toml document from an input stream
-	 * 
+	 *
 	 * @param in
 	 *            an input stream containing a toml document
 	 * @return an unnamed root {@link KeyGroup} containing the top level key
 	 *         value pairs and key groups of the document
 	 */
 	public static KeyGroup parse(InputStream in) throws IOException {
-		final InputStreamReader reader = new InputStreamReader(in, Charsets.UTF_8);
+		final InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
 		final TomlLexer lexer = new TomlLexer(new ANTLRInputStream(reader));
 		final TomlParser parser = new TomlParser(new CommonTokenStream(lexer));
 		return KEY_GROUP_VISITORS.visit(parser.toml());
 	}
 
 	public static KeyGroup parse(String toml) throws IOException {
-		return parse(new ByteArrayInputStream(toml.getBytes(Charsets.UTF_8)));
+		return parse(new ByteArrayInputStream(toml.getBytes(StandardCharsets.UTF_8)));
 	}
 
 	private static final StringVisitors STRING_VISITORS = new StringVisitors();
