@@ -1,8 +1,10 @@
 package es.wobbl.toml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,8 +28,11 @@ public class SerializerTest {
 	@SuppressWarnings("unused")
 	public void testPojoSerialization() throws IOException {
 		Serializer.serialize(new Object() {
+			public final BigInteger big = new BigInteger("1111111111111111111111111111111111");
+			public final boolean bool = true;
 			public final byte b = 1;
 			public final int foo = 1;
+			public final boolean[] booleanArray = { true, false };
 			public final String[] stringArray = { "a", "b", "c" };
 			public final Integer[] array = { 1, 2, 3 };
 			public final Integer[] emptyArray = {};
@@ -55,8 +60,11 @@ public class SerializerTest {
 		System.out.println("-------------");
 		Serializer.serialize(root, System.out);
 		final ImmutableList<Long> list = ImmutableList.of(1L, 2L, 3L);
+		assertTrue(root.getBool("bool"));
+		assertEquals(new BigInteger("1111111111111111111111111111111111"), root.getBigInteger("big"));
 		assertEquals(ImmutableList.of(), root.getList("emptyArray", Long.class));
 		assertEquals(ImmutableList.of("a", "b", "c"), root.getList("stringArray", String.class));
+		assertEquals(ImmutableList.of(true, false), root.getList("booleanArray", Boolean.class));
 		assertEquals(list, root.getList("array", Long.class));
 		assertEquals(list, root.getList("bar", Long.class));
 		assertEquals(list, root.getList("obj.bar2", Long.class));
