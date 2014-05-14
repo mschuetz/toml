@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 public class Serializer {
@@ -45,6 +46,8 @@ public class Serializer {
 	}
 
 	public static void serialize(String path, Object o, Appendable out) throws IOException {
+		Preconditions.checkNotNull(o);
+		Preconditions.checkNotNull(out);
 		// if not root object
 		if (!Strings.isNullOrEmpty(path))
 			out.append('[').append(path).append("]\n");
@@ -67,9 +70,11 @@ public class Serializer {
 		}));
 	}
 
-	public static void serialize(KeyGroup obj, Appendable out) throws IOException {
-		final String name = obj.isRoot() ? null : obj.getName();
-		serialize(name, obj, out);
+	public static void serialize(KeyGroup o, Appendable out) throws IOException {
+		Preconditions.checkNotNull(o);
+		Preconditions.checkNotNull(out);
+		final String name = o.isRoot() ? null : o.getName();
+		serialize(name, o, out);
 	}
 
 	private static void serializeDateTime(Temporal temporal, Appendable out) throws IOException {
@@ -77,6 +82,7 @@ public class Serializer {
 	}
 
 	public static void serializeValue(Object obj, Appendable out) throws IOException {
+		Preconditions.checkNotNull(obj);
 		if (obj instanceof Calendar) {
 			serializeDateTime(((Calendar) obj).toInstant(), out);
 		} else if (obj instanceof Date) {
@@ -126,6 +132,8 @@ public class Serializer {
 			out.append('"');
 		} else if (obj instanceof Number || obj instanceof Boolean) {
 			out.append(obj.toString());
+		} else {
+			throw new IllegalArgumentException(obj.getClass() + " cannot be serialized");
 		}
 	}
 
@@ -140,11 +148,11 @@ public class Serializer {
 		 * regarding numbers, what I really would like to check is: if it is a
 		 * floating point number: check if it's within the bounds of double if
 		 * it is an integer: check if it's within the bounds of a signed long
-		 * 
+		 *
 		 * problem: How do I generically find out whether a child class of
 		 * Number is fixed or floating? all they have in common are conversion
 		 * methods like intValue longValue...
-		 * 
+		 *
 		 * <s>idea: call longValue & doubleValue and check for equality.</s>
 		 * doesn't work
 		 */

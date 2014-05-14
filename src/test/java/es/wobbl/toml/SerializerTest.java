@@ -3,6 +3,7 @@ package es.wobbl.toml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -100,5 +101,10 @@ public class SerializerTest {
 		final StringBuilder out = new StringBuilder();
 		Serializer.serializeValue(Instant.ofEpochMilli(0L), out);
 		assertEquals("1970-01-01T00:00:00Z", out.toString());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSerializeOutputStream() throws Exception {
+		Serializer.serializeValue(new ByteArrayOutputStream(), out);
 	}
 }
