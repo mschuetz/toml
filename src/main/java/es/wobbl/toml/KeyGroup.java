@@ -34,6 +34,7 @@ public class KeyGroup {
 	 * recursively looks up a child element of this key group
 	 */
 	public Object get(String path) {
+		Preconditions.checkNotNull(path);
 		KeyGroup cur = this;
 		int i = 0;
 		final String[] parts = path.split("\\.");
@@ -52,6 +53,8 @@ public class KeyGroup {
 	}
 
 	public <T> List<T> getList(String path, Class<T> klazz) {
+		Preconditions.checkNotNull(path);
+		Preconditions.checkNotNull(klazz);
 		@SuppressWarnings("unchecked")
 		final List<T> list = (List<T>) get(path);
 		if (!list.isEmpty())
@@ -96,14 +99,16 @@ public class KeyGroup {
 	 * creates keygroups recursively up to the second last path segment and puts
 	 * the given object into the last keygroup under the last path segment as
 	 * name.
-	 * 
+	 *
 	 * new keygroups along the path will be created if they don't exist yet. an
 	 * {@link IllegalArgumentException} is raised.
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 *             if it finds a non-keygroup object along the path
 	 */
 	public void putRecursive(String path, Object obj) {
+		Preconditions.checkNotNull(path);
+		Preconditions.checkNotNull(obj);
 		KeyGroup cur = this;
 		int i = 0;
 		final String[] parts = path.split("\\.");
