@@ -10,4 +10,4 @@ script:
 env:
   global:
   - REPORT_DIR=target/site
-  - secure: TAlhI/hkrqYUCw+VBppofUxNSeM6Nn3v49IktWxTHTLirq4DUdYtSVoFWN0u4o9rMep90vXmen8YcXjTQ5uV4zsxfn4wWX7I3/ojePlHU6wd3WhXpRANL0UH3a5SjdUeIURvjPjLFg5BZpqKFpD06XSUPsvA5Hb9Ce6chT4wUug=
+  - secure: dbDDhIwfNeO9Xe30Y9T2mMJHnf37D/6RgsgDbCVFkmoPovbKvHWZbPXI7M1HNpGkBE2/ucuK1jrFJBYL5mZjrSAHmS+peIWat5XGzMsIGu+tCNOBGyR9B8UcVPhkNmP4De0o5J/4pZTmjO9SMCJ80l2u0/WUMAJpe6jnBiPzmE0=
