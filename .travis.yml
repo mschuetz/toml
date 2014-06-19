@@ -1,6 +1,13 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
 script:
-  - mvn test
-  - gradle check
+- mvn test
+- gradle check
+- mvn site
+- curl -s 'https://raw.githubusercontent.com/mschuetz/travis-utils/master/push_gh_pages.sh'
+  | bash -eu
+env:
+  global:
+  - REPORT_DIR=target/site
+  - secure: TAlhI/hkrqYUCw+VBppofUxNSeM6Nn3v49IktWxTHTLirq4DUdYtSVoFWN0u4o9rMep90vXmen8YcXjTQ5uV4zsxfn4wWX7I3/ojePlHU6wd3WhXpRANL0UH3a5SjdUeIURvjPjLFg5BZpqKFpD06XSUPsvA5Hb9Ce6chT4wUug=
