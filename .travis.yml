@@ -1,0 +1,12 @@
+language: java
+jdk:
+- oraclejdk8
+script:
+- mvn test
+- mvn site
+- curl -s 'https://raw.githubusercontent.com/mschuetz/travis-utils/testing/push_gh_pages.sh'
+  | bash -eu
+env:
+  global:
+  - REPORT_DIR=target/site
+  - secure: dbDDhIwfNeO9Xe30Y9T2mMJHnf37D/6RgsgDbCVFkmoPovbKvHWZbPXI7M1HNpGkBE2/ucuK1jrFJBYL5mZjrSAHmS+peIWat5XGzMsIGu+tCNOBGyR9B8UcVPhkNmP4De0o5J/4pZTmjO9SMCJ80l2u0/WUMAJpe6jnBiPzmE0=

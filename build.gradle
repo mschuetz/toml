@@ -1,0 +1,71 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+ext.antlr = [
+	grammarpackage: "es.wobbl.toml.grammar",
+	antlrSource: 'src/main/antlr4',
+	destinationDir: "target/generated-sources/antlr4"
+]
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	antlr4 {
+		description = "ANTLR4"
+	}
+}
+
+dependencies {
+	compile 'com.google.guava:guava:17.0'
+	compile 'org.apache.commons:commons-lang3:3.3.2'
+	compile 'org.antlr:antlr4-runtime:4.2.2'
+	antlr4 'org.antlr:antlr4:4.2.2'
+	testCompile 'junit:junit:4.11' // A dependency for a test framework.
+}
+
+task antlrOutputDir << {
+	mkdir(antlr.destinationDir)
+}
+
+task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
+	description = 'Generates Java sources from ANTLR4 grammars.'
+	
+	inputs.dir file(antlr.antlrSource)
+	outputs.dir file(antlr.destinationDir)
+	
+	def grammars = fileTree(antlr.antlrSource).include('**/*.g4')
+	
+	main = 'org.antlr.v4.Tool'
+	classpath = configurations.antlr4
+	def pkg = antlr.grammarpackage.replaceAll("\\.", "/")
+	args = ["-o", "${antlr.destinationDir}/${pkg}"/*, "-atn"*/, "-visitor", "-package", antlr.grammarpackage, grammars.files].flatten()
+}
+
+eclipse.classpath {
+	file {
+		withXml { xml ->
+			def node = xml.asNode()
+			node.appendNode("classpathentry", [kind: "src", path: antlr.destinationDir])
+		}
+	}
+}
+eclipse {
+	classpath {
+		downloadSources = true
+		downloadJavadoc = true
+	}
+}
+
+compileJava {
+	dependsOn generateGrammarSource
+	source antlr.destinationDir
+}
+
+clean {
+	delete antlr.destinationDir
+}

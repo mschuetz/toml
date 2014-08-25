@@ -1,0 +1,111 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>es.wobbl.toml</groupId>
+	<artifactId>toml</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>TOML</name>
+	<description>A TOML parser for Java implemented with ANTLR4</description>
+	<url>https://github.com/mschuetz/toml</url>
+	<inceptionYear>2013</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>The MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Matthias Schütz</name>
+			<email>mschuetz@gmail.com</email>
+			<timezone>1</timezone>
+			<url>http://www.matthias-schuetz.eu</url>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:mschuetz/toml.git</connection>
+		<developerConnection>scm:git:git@github.com:mschuetz/toml.git</developerConnection>
+		<url>https://github.com/mschuetz/toml</url>
+	</scm>
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/mschuetz/toml/issues</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/mschuetz/toml</url>
+	</ciManagement>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>4.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>17.0</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+				<version>3.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.2.2</version>
+				<executions>
+					<execution>
+						<id>antlr</id>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+						<configuration>
+							<visitor>true</visitor>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.17</version>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>

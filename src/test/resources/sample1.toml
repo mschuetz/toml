@@ -1,0 +1,15 @@
+# comment
+[empty.keygroup]
+[fruit] # comment
+nested = [[1,2],[3,4], []]
+#comment
+stringarray = ["abc", "def"]
+dtarray = [1979-05-27T07:32:00Z, 1970-01-01T00:00:00Z]
+type = "apple" # comment
+dob = 1979-05-27T07:32:00Z # First class dates? Why not?
+# comment
+
+[legume#works"[]
+type = "lentil"
+variants = ["red", "yellow", "bel\nuga"] # comment
+nested = [[1,2],[3,4], []]
